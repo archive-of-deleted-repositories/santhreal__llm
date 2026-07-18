@@ -288,6 +288,13 @@ def test_schema_dsl_multi():
             "12345...",
         ),  # Too small for keep_end, use regular
         ("1234567890", 9, False, True, "12... 90"),  # Just enough for keep_end
+        # max_length below ellipsis width must not exceed max_length
+        ("abcdefghij", 0, False, False, ""),
+        ("abcdefghij", 1, False, False, "a"),
+        ("abcdefghij", 2, False, False, "ab"),
+        ("abcdefghij", 3, False, False, "..."),
+        ("abcdefghij", 0, False, True, ""),
+        ("abcdefghij", 2, False, True, "ab"),
     ],
 )
 def test_truncate_string(text, max_length, normalize_whitespace, keep_end, expected):

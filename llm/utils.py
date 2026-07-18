@@ -456,6 +456,9 @@ def truncate_string(
     if not text:
         return text
 
+    if max_length <= 0:
+        return ""
+
     if normalize_whitespace:
         text = re.sub(r"\s+", " ", text)
 
@@ -470,9 +473,10 @@ def truncate_string(
         # Subtract 5 for the "... " separator
         cutoff = (max_length - 5) // 2
         return text[:cutoff] + "... " + text[-cutoff:]
-    else:
-        # Fall back to simple truncation for very small max_length
-        return text[: max_length - 3] + "..."
+    # Ellipsis is 3 chars; below that, hard-cut so result length <= max_length.
+    if max_length < 3:
+        return text[:max_length]
+    return text[: max_length - 3] + "..."
 
 
 def ensure_fragment(db, content):
